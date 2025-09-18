@@ -1,0 +1,18 @@
+@key={{$dotenv API_KEY}}
+@secret={{$dotenv API_SECRET}}
+@url=http://localhost:3000/api
+
+### Health check
+GET {{url}}/health
+
+### Single IP lookup
+GET {{url}}/ip/8.8.8.8
+content-type: application/json
+X-API-Key: {{key}}
+X-API-Secret: {{secret}}
+
+### Query parameter lookup
+GET {{url}}/lookup?ip=1.1.1.1
+content-type: application/json
+X-API-Key: {{key}}
+X-API-Secret: {{secret}}
