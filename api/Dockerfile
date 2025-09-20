@@ -50,12 +50,18 @@ COPY --from=builder /app/build ./build
 # Copy database directory (if it exists)
 COPY --from=builder /app/data ./data
 
-# Create data directory and set permissions
-RUN mkdir -p /app/data && \
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+
+# Install su-exec for user switching in entrypoint
+RUN apk add --no-cache su-exec
+
+# Make entrypoint executable and create data directory
+RUN chmod +x /entrypoint.sh && \
+    mkdir -p /app/data && \
     chown -R nodejs:nodejs /app
 
-# Switch to non-root user
-USER nodejs
+# Don't switch to nodejs user here - let entrypoint handle it
 
 # Expose port
 EXPOSE 3000
@@ -63,6 +69,9 @@ EXPOSE 3000
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD node -e "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+
+# Set entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Start the application
 CMD ["node", "build/main.js"]

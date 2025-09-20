@@ -1,6 +1,6 @@
 @key={{$dotenv API_KEY}}
 @secret={{$dotenv API_SECRET}}
-@url={{dotenv API_URL}}
+@url={{$dotenv API_URL}}
 
 ### Health check
 GET {{url}}/health
